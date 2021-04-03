@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# https://github.com/unusedPhD/bash-skeleton/blob/master/starter.sh
+set -ex
+
+if [ -z "$1" ]; then
+    echo "
+    usage: $0 machine 
+      -f force
+      -k ssh key for root
+      
+    "
+    exit 1
+fi
+    
+MDIR=/var/lib/machines
+MNAME=$1
+if [ ! -z "$2" ]; then
+    MDIR=$2
+fi    
+MM=$MDIR/$MNAME
+
+debootstrap --include systemd-container,openssh-server buster $MM \
+  http://localhost:3142/deb.debian.org/debian/
+
+echo 'Acquire::http { Proxy "http://pisa:3142"; };' > \
+  $MM/etc/apt/apt.conf.d/01aptcacherng
+sed -i 's/https/http/' $MM/etc/apt/sources.list
+echo $MNAME > $MM/etc/hostname
+
+#ssh-key for root access
+mkdir $MM/root/.ssh
+cp --preserve=mode /home/db/.ssh/id_rsa.pub $MM/root/.ssh/authorized_keys
+
+systemd-nspawn -UM $MNAME systemctl enable systemd-networkd
+systemctl start systemd-nspawn@$MNAME
+
+
