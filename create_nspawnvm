@@ -34,6 +34,7 @@ mkdir $MM/root/.ssh
 cp --preserve=mode /home/?b/.ssh/id_rsa.pub $MM/root/.ssh/authorized_keys
 
 systemd-nspawn -UM $MNAME systemctl enable systemd-networkd
+systemctl enable systemd-nspawn@$MNAME
 systemctl start systemd-nspawn@$MNAME
 
 
