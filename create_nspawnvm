@@ -37,4 +37,7 @@ systemd-nspawn -UM $MNAME systemctl enable systemd-networkd
 systemctl enable systemd-nspawn@$MNAME
 systemctl start systemd-nspawn@$MNAME
 
-
+#
+# hostname zu IP wird von systemd-network und dem NSS modul von machinectl
+# gehandlet?  /etc/nsswitch.conf mymachines
+#
