@@ -16,6 +16,9 @@ fi
 PROXY='http://pisa:3142/'
 MDIR=/var/lib/machines
 MNAME=$1
+user=$SUDO_USER
+
+
 if [ ! -z "$2" ]; then
     MDIR=$2
 fi    
@@ -31,8 +34,8 @@ echo $MNAME > $MM/etc/hostname
 
 #ssh-key for root access
 mkdir $MM/root/.ssh
-cp --preserve=mode /home/?b/.ssh/id_rsa.pub $MM/root/.ssh/authorized_keys
-
+cp --preserve=mode /home/$user/.ssh/id_rsa.pub $MM/root/.ssh/authorized_keys
+#TODO /etc/hosts
 systemd-nspawn -UM $MNAME systemctl enable systemd-networkd
 systemctl enable systemd-nspawn@$MNAME
 systemctl start systemd-nspawn@$MNAME
